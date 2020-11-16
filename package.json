@@ -12,8 +12,8 @@
     "lunr": "^2.3.9"
   },
   "devDependencies": {
-    "metalsmith": "^0.9.0",
-    "mocha": "^1.21.4"
+    "metalsmith": "^2.1.0",
+    "mocha": "^8.2.1"
   },
   "repository": {
     "type": "git",

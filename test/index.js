@@ -23,8 +23,7 @@ describe('metalsmith-lunr', function(){
       .build(function(err, files){
         if (err) return done(err);
         index = JSON.parse(files['searchIndex.json'].contents);
-        assert.equal(index.ref, 'filePath');
-        assert.equal(index.fields[0].name, 'contents');
+        assert.equal(index.fields[0], 'contents');
         done();
       });
   });
@@ -40,12 +39,9 @@ describe('metalsmith-lunr', function(){
       .build(function(err, files){
         if (err) return done(err);
         index = JSON.parse(files['index.json'].contents);
-        assert.equal(index.ref, 'title');
         assert.equal(index.fields.length, 3);
-        assert.equal(index.fields[0].name, 'title');
-        assert.equal(index.fields[1].name, 'tags');
-        assert.equal(index.fields[0].boost, 10);
-        assert.equal(index.fields[1].boost, 100);
+        assert.equal(index.fields[0], 'title');
+        assert.equal(index.fields[1], 'tags');
         done();
       });
   });
@@ -57,7 +53,7 @@ describe('metalsmith-lunr', function(){
       .build(function(err, files){
         if (err) return done(err);
         index = JSON.parse(files['searchIndex.json'].contents);
-        assert.equal(index.documentStore.length, 2);
+        assert.equal(index.fieldVectors.length, 2);
         done();
       });
   });
