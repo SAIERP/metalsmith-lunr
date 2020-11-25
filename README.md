@@ -84,7 +84,8 @@ var results = idx.search("Your Search Terms Here");
 
 #### Content extension
 
-When serializing the index, the library injects a field reference for each document
+When serializing the index, if the `buildDictionary` option is set to true the 
+library will inject a field reference for each document
 and store is as a document map in the serialized file. When you load the json file
 you can retrieve the content of the document property that can then be used for
 meta display associated with search. The whole point of this extension is to avoid
