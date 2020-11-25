@@ -38,11 +38,11 @@ describe('metalsmith-lunr', function(){
       .use(lunr({
         fields: {title:10, tags:100, contents: 1},
         ref: 'title',
-        indexPath: 'index.json'
+        indexPath: 'searchIndex.json'
       }))
       .build(function(err, files){
         if (err) return done(err);
-        index = JSON.parse(files['index.json'].contents);
+        index = JSON.parse(files['searchIndex.json'].contents);
         assert.equal(index.fields.length, 3);
         assert.equal(index.fields[0], 'title');
         assert.equal(index.fields[1], 'tags');
@@ -67,7 +67,7 @@ describe('metalsmith-lunr', function(){
     metalsmith
       .use(lunr({
         fields: {title:1, contents: 1},
-        indexPath: 'index.json',
+        indexPath: 'searchIndex.json',
         ref: 'filePath',
         whitelist: ['position', 'testPipe'],
         pipelineFunctions: {
@@ -79,7 +79,7 @@ describe('metalsmith-lunr', function(){
       }))
       .build(function(err, files){
         if (err) return done(err);
-        index = JSON.parse(files['index.json'].contents);
+        index = JSON.parse(files['searchIndex.json'].contents);
         assert.equal(index.invertedIndex[0][1]['contents']['one.md']['testPipe'][0], 10);
         done();
       });
@@ -91,7 +91,7 @@ describe('metalsmith-lunr', function(){
     metalsmith
       .use(lunr({
         fields: {contents: 1},
-        indexPath: 'index.json',
+        indexPath: 'searchIndex.json',
         ref: 'filePath',
         whitelist: ['testMeta'],
         pipelineFunctions: {
@@ -103,7 +103,7 @@ describe('metalsmith-lunr', function(){
       }))
       .build(function(err, files){
         if (err) return done(err);
-        let indexContent = JSON.parse(files['index.json'].contents);
+        let indexContent = JSON.parse(files['searchIndex.json'].contents);
         let loaded = lunr_.Index.load(indexContent);
         let result = loaded.search('python');
         assert.equal(result[0].matchData.metadata['python'].contents.testMeta, 6);
@@ -111,4 +111,24 @@ describe('metalsmith-lunr', function(){
       });
   });
 
+
+  it('should be able to retrieve document meta from ref through document serialization extension', function(done){
+    var metalsmith = Metalsmith('test/fixtures/basic');
+    metalsmith
+      .use(lunr({
+        fields: {contents: 1, title: 1},
+        indexPath: 'searchIndex.json',
+        ref: 'filePath'
+      }))
+      .build(function(err, files){
+        if (err) return done(err);
+        let indexContent = JSON.parse(files['searchIndex.json'].contents);
+        let loaded = lunr_.Index.load(indexContent);
+        loaded.documents = indexContent.documents;
+        let result = loaded.search('python');
+        assert.equal(result[0].ref, 'two.md');
+        assert.equal('python', loaded.documents['two.md'].title);
+        done();
+      });
+  });
 });

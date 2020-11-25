@@ -39,7 +39,7 @@ require('lunr-languages/lunr.no')(lunr_);
 
 metalsmith.use(lunr({
   ref: 'title',
-  indexPath: 'index.json',
+  indexPath: 'searchIndex.json',
   fields: {
       contents: 1,
       tags: 10
@@ -66,11 +66,11 @@ metalsmith.use(lunr({
 
 #### Default Parameter Values
 
-  - `fields`: {`contents`: `1`}
-  - `ref`: `filePath`
-  - `indexPath`: `searchIndex.json`
+- `fields`: {`contents`: `1`}
+- `ref`: `filePath`
+- `indexPath`: `searchIndex.json`
 
- 
+
 ##Client Side Search
 
 Metalsmith-lunr will generate searchIndex.json. Include [lunr.js](https://raw.githubusercontent.com/olivernn/lunr.js/master/lunr.min.js) in your javascript source files. Client side search example can be found [here](http://lunrjs.com/example/).
@@ -80,6 +80,22 @@ Once the JSON file has been parsed into javascript, simply run the following:
 //index is the parsed JSON file
 idx = lunr.Index.load(index)
 var results = idx.search("Your Search Terms Here");
+```
+
+#### Content extension
+
+When serializing the index, the library injects a field reference for each document
+and store is as a document map in the serialized file. When you load the json file
+you can retrieve the content of the document property that can then be used for
+meta display associated with search. The whole point of this extension is to avoid
+storing the document fields in the search metadata that would lead to extreme size
+overhead.
+
+```javascript
+// let indexContent be the retrieved Json we load the index
+let loaded = lunr_.Index.load(indexContent);
+// and associate the document meta contents with it
+loaded.documents = indexContent.documents;
 ```
 
 ## CLI Usage
